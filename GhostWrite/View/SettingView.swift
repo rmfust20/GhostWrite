@@ -8,9 +8,19 @@
 import SwiftUI
 import CoreData
 
+struct AddLocationView: View {
+    var body: some View {
+        Text("Add Location View")
+    }
+}
+
 struct SettingView: View {
     
     @Environment(\.managedObjectContext) private var viewContext
+    
+    @State private var showAddLocation = false
+    @State private var newName = ""
+    @State private var newLore = ""
     
     // Fetch all Location entities, sorted by name
 
@@ -59,16 +69,51 @@ struct SettingView: View {
             VStack {
                 Text("Locations")
                     .font(.largeTitle)
-                Button("Print Locations") {
-                    printLocations()
+                Button {
+                    showAddLocation = true
+                    
+                } label: {
+                    CardView(title: "Add Location", systemImage: "plus.circle.fill")
+                        
                 }
+                .buttonStyle(.plain)
                 
-                Button("Save Locations") {
-                    saveLocation(name: "New Location", lore: "This is a new location.")
+                
                 }
-                
             }
+        
+        .fullScreenCover(isPresented: $showAddLocation) {
+                    VStack(spacing: 20) {
+                        Text("New Location").font(.title)
+                        TextField("Name", text: $newName)
+                            .textFieldStyle(RoundedBorderTextFieldStyle())
+                            .padding(.horizontal)
+                        Text("Lore")
+                        TextEditor(text: $newLore)
+                            .frame(height: 50)
+                            .border(Color.gray)
+                            .padding(.horizontal)
+                        HStack {
+                            Button("Cancel") {
+                                showAddLocation = false
+                            }
+                            Spacer()
+                            Button("Save") {
+                                saveLocation(name: newName, lore: newLore)
+                                newName = ""
+                                newLore = ""
+                                showAddLocation = false
+                            }
+                        }
+                        .padding(.horizontal)
+                    }
+                    .padding()
+                    .background(Color("Background"))
+                }
         }
     }
-}
 
+#Preview {
+    SettingView()
+        .environment(\.managedObjectContext, PreviewCoreDataStack.shared.viewContext)
+}
