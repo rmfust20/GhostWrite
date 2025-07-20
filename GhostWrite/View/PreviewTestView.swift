@@ -15,7 +15,7 @@ struct CardItem: Identifiable, Hashable {
 
 struct MainContent: View {
     
-    @State private var selectedCard: CardItem?
+    @Binding var selectedCard: CardItem?
     
     private let cardItems: [CardItem] = [
         CardItem(title: "Architecture", systemImage: "door.garage.closed"),
@@ -52,8 +52,12 @@ struct MainContent: View {
                     }
                 }
                 .padding()
+                // In MainContent (PreviewTestView.swift)
                 .fullScreenCover(item: $selectedCard) { card in
-                    AddInfoView(workingCard: CardView(title: card.title, systemImage: card.systemImage))
+                    AddInfoView(
+                        workingCard: CardView(title: card.title, systemImage: card.systemImage),
+                        onDismiss: { selectedCard = nil }
+                    )
                 }
             }
         }
@@ -64,6 +68,7 @@ struct PreviewTestView: View {
     
     @State private var text: String = "hello"
     @State private var showAddLocation = true
+    @State private var selectedCard: CardItem?
     
     var body: some View {
         ZStack {
@@ -79,7 +84,8 @@ struct PreviewTestView: View {
                         
                 }
                 
-                MainContent()
+                MainContent(selectedCard: $selectedCard)
+                    
                 
             }
         }

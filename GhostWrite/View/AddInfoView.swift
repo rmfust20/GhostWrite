@@ -9,8 +9,9 @@ import SwiftUI
 
 struct AddInfoView: View {
     
-    let workingCard : CardView?
+    let workingCard : CardView
     @State private var text : String = ""
+    var onDismiss: () -> Void = {}
     
     var body: some View {
         ZStack {
@@ -27,7 +28,7 @@ struct AddInfoView: View {
             }
             
             Button {
-               print("hello")
+                onDismiss()
             } label: {
                 Image(systemName: "xmark")
 
