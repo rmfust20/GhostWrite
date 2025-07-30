@@ -45,7 +45,33 @@ extension CoreDataStack {
     
     // Delete a ShoppingItem and save the context.
     func delete<T: NSManagedObject>(item: T) {
-           persistentContainer.viewContext.delete(item)
-           save()
-       }
-}
+        persistentContainer.viewContext.delete(item)
+        save()
+    }
+    
+    func fetchRecord(entityName: String, name: String) -> NSManagedObject? {
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entityName)
+        fetchRequest.predicate = NSPredicate(format: "name == %@", name)
+        fetchRequest.fetchLimit = 1
+        
+        do {
+            return try
+            persistentContainer.viewContext.fetch(fetchRequest).first
+        } catch {
+            print("Failed to fetch record: \(error.localizedDescription)")
+            return nil
+        }
+        
+    }
+    
+    func fetchAllRecords(entityName: String) -> [NSManagedObject] {
+        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entityName)
+        do {
+            return try persistentContainer.viewContext.fetch(fetchRequest)
+        } catch {
+            print("Failed to fetch records for \(entityName): \(error.localizedDescription)")
+            return []
+            }
+        }
+    }
+

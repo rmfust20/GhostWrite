@@ -9,5 +9,9 @@ import Foundation
 
 struct LocationModel {
     let name: String
-    let lore: String
+    var architecture: String
+    var importantPeople: [String]
+    var history: String
+    var culture: String
+    var general: String
 }

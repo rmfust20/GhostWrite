@@ -83,32 +83,8 @@ struct SettingView: View {
             }
         
         .fullScreenCover(isPresented: $showAddLocation) {
-                    VStack(spacing: 20) {
-                        Text("New Location").font(.title)
-                        TextField("Name", text: $newName)
-                            .textFieldStyle(RoundedBorderTextFieldStyle())
-                            .padding(.horizontal)
-                        Text("Lore")
-                        TextEditor(text: $newLore)
-                            .frame(height: 50)
-                            .border(Color.gray)
-                            .padding(.horizontal)
-                        HStack {
-                            Button("Cancel") {
-                                showAddLocation = false
-                            }
-                            Spacer()
-                            Button("Save") {
-                                saveLocation(name: newName, lore: newLore)
-                                newName = ""
-                                newLore = ""
-                                showAddLocation = false
-                            }
-                        }
-                        .padding(.horizontal)
-                    }
-                    .padding()
-                    .background(Color("Background"))
+                    PreviewTestView(showAddLocation: $showAddLocation)
+                        
                 }
         }
     }

@@ -67,7 +67,7 @@ struct MainContent: View {
 struct PreviewTestView: View {
     
     @State private var text: String = "hello"
-    @State private var showAddLocation = true
+    @Binding var showAddLocation: Bool
     @State private var selectedCard: CardItem?
     
     var body: some View {
@@ -93,5 +93,6 @@ struct PreviewTestView: View {
 }
 
 #Preview {
-    PreviewTestView()
+    PreviewTestView(showAddLocation: .constant(false))
+        
 }
