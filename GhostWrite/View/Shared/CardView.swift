@@ -15,11 +15,8 @@ struct CardView: View {
                 .font(.system(size: 45))
             Text(title)
                 .font(.title2)
-                .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .frame(maxWidth: .infinity, minHeight: 40) // Ensures consistent text height
         }
-        .frame(maxWidth: .infinity, minHeight: 140)
+        .frame(maxWidth: .infinity)
         .padding(.vertical, 20)
         .background(
             RoundedRectangle(cornerRadius: 10)

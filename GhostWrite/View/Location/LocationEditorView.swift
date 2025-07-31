@@ -20,7 +20,7 @@ struct MainContent: View {
     private let cardItems: [CardItem] = [
         CardItem(title: "Architecture", systemImage: "door.garage.closed"),
         CardItem(title: "History", systemImage: "book.closed"),
-        CardItem(title: " Important People", systemImage: "figure.stand"),
+        CardItem(title: "Important People", systemImage: "figure.stand"),
         CardItem(title: "Culture", systemImage: "paintbrush.fill"),
         CardItem(title: "General", systemImage: "questionmark.circle.fill")
     ]
@@ -43,8 +43,8 @@ struct MainContent: View {
                                     selectedCard = item
                                     
                                 } label : {
-                                    CardView(title: item.title, systemImage: item.systemImage)
-                                        .frame(height: 200)
+                                    CustomCardView(title: item.title, systemImage: item.systemImage)
+
                                 }
                                 .buttonStyle(.plain)
                             }
@@ -55,7 +55,7 @@ struct MainContent: View {
                 // In MainContent (PreviewTestView.swift)
                 .fullScreenCover(item: $selectedCard) { card in
                     AddInfoView(
-                        workingCard: CardView(title: card.title, systemImage: card.systemImage),
+                        workingTitle: card.title,
                         onDismiss: { selectedCard = nil }
                     )
                 }
@@ -63,8 +63,38 @@ struct MainContent: View {
         }
     }
 
+struct CustomCardView : View {
+    let title: String
+    let systemImage: String
 
-struct PreviewTestView: View {
+    init(title: String = "Add Card", systemImage: String = "plus.circle.fill") {
+        self.title = title
+        self.systemImage = systemImage
+    }
+
+    var body: some View {
+        VStack {
+            Image(systemName: systemImage)
+                .font(.system(size: 45))
+            Text(title)
+                .font(.title2)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, minHeight: 40) // Ensures consistent text height
+        }
+        .frame(maxWidth: .infinity, minHeight: 140)
+        .padding(.vertical, 20)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(lineWidth: 2)
+                .opacity(0.4)
+        )
+        .padding()
+    }
+}
+
+
+struct LocationEditorView: View {
     
     @State private var text: String = "hello"
     @Binding var showAddLocation: Bool
@@ -93,6 +123,7 @@ struct PreviewTestView: View {
 }
 
 #Preview {
-    PreviewTestView(showAddLocation: .constant(false))
+    LocationEditorView(showAddLocation: .constant(false))
         
 }
+

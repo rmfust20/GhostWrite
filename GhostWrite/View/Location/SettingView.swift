@@ -83,7 +83,7 @@ struct SettingView: View {
             }
         
         .fullScreenCover(isPresented: $showAddLocation) {
-                    PreviewTestView(showAddLocation: $showAddLocation)
+            LocationEditorView(showAddLocation: $showAddLocation)
                         
                 }
         }
