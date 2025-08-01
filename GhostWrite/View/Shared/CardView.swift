@@ -2,17 +2,19 @@ import SwiftUI
 
 struct CardView: View {
     let title: String
-    let systemImage: String
+    let systemImage: String?
 
-    init(title: String = "Add Card", systemImage: String = "plus.circle.fill") {
+    init(title: String = "Add Card", systemImage: String? = "plus.circle.fill") {
         self.title = title
         self.systemImage = systemImage
     }
 
     var body: some View {
         VStack {
-            Image(systemName: systemImage)
-                .font(.system(size: 45))
+            if let systemImage = systemImage {
+                Image(systemName: systemImage)
+                    .font(.system(size: 45))
+            }
             Text(title)
                 .font(.title2)
         }

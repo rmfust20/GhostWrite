@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct LocationModel {
+struct LocationModel: Encodable {
     let name: String
     var architecture: String
     var importantPeople: [String]

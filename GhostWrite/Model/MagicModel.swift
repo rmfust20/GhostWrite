@@ -7,7 +7,9 @@
 
 import Foundation
 
-struct MagicModel {
+struct MagicModel : Encodable {
     let name: String
+    let abilities: String
+    let limitations: String
 }
 

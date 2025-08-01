@@ -13,7 +13,7 @@ class EntityListViewModel: ObservableObject {
     //and I can use this to create settingView, MagicView, and characterView
     
     private let coreDataStack: CoreDataStack
-    
+   
     init(coreDataStack: CoreDataStack = CoreDataStack.shared) {
         self.coreDataStack = coreDataStack
     }
@@ -27,12 +27,35 @@ class EntityListViewModel: ObservableObject {
         case character(CharacterModel)
     }
     
-    func fetchEntities(_ entity: String) {
-        fetchedResults = coreDataStack.fetchAllRecords(entityName: entity)
+    func setEntity(_ entity: WorkingEntity) {
+        self.workingEntity = entity
     }
     
+    func fetchEntities(_ entity: String) {
+        self.fetchedResults = coreDataStack.fetchAllRecords(entityName: entity)
+    }
     
-    func saveEntity(_ entity: WorkingEntity) {
+    private func saveEntityHelper<T: Encodable>(entityName: String, model: T, name: String) {
+        let fetchedRecord = coreDataStack.fetchRecord(entityName: entityName, name: name)
+        if fetchedRecord == nil {
+            let context = coreDataStack.persistentContainer.viewContext
+            let newObject = NSEntityDescription.insertNewObject(forEntityName: entityName, into: context)
+            if let dict = try? model.asDictionary() {
+                newObject.setValuesForKeys(dict)
+                coreDataStack.save()
+            }
+        }
+    }
+
+    func saveEntity(_ passedEntity: WorkingEntity) {
+        switch passedEntity {
+        case .location(let locationModel):
+            saveEntityHelper(entityName: "Location", model: locationModel, name: locationModel.name)
+        case .magic(let magicModel):
+            saveEntityHelper(entityName: "Magic", model: magicModel, name: magicModel.name)
+        case .character(let characterModel):
+            saveEntityHelper(entityName: "Character", model: characterModel, name: characterModel.name)
+        }
     }
 }
 

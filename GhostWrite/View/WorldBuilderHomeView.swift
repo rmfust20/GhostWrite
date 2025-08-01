@@ -8,6 +8,12 @@
 import SwiftUI
 
 struct WorldBuilderHomeView: View {
+    
+    @Binding var isPresented: Bool
+    @State private var navigateSetting : Bool = false
+    @State private var navigateCharacters : Bool = false
+    @State private var navigateMagic : Bool = false
+    
     var body: some View {
         ZStack {
             Color("Background")
@@ -18,10 +24,19 @@ struct WorldBuilderHomeView: View {
                     .padding(.top, 40)
                     .underline()
                 Spacer()
-                CardView(title: "Setting", systemImage: "globe.americas.fill")
+                TransitionButton(title: "Locations", systemImage: "map.fill", transitionBool: $navigateSetting)
                 CardView(title: "Characters", systemImage: "person.3.fill")
                 CardView(title: "Magic", systemImage: "sparkles")
                 Spacer()
+                Button {
+                    isPresented.toggle()
+                } label: {
+                    Text("Done")
+                        
+                }
+            }
+            .fullScreenCover(isPresented: $navigateSetting) {
+                SettingView(isPresented: $navigateSetting)
             }
         }
         
@@ -30,5 +45,5 @@ struct WorldBuilderHomeView: View {
 
 
 #Preview {
-    WorldBuilderHomeView()
+    WorldBuilderHomeView(isPresented: .constant(true))
 }

@@ -7,6 +7,9 @@
 
 import Foundation
 
-struct CharacterModel {
+struct CharacterModel: Encodable {
     let name: String
+    let backstory: String
+    let motivation: String
+    let personlity: String
 }

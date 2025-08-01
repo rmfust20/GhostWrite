@@ -9,11 +9,27 @@ import SwiftUI
 import CoreData
 
 struct EntityListView: View {
+    
+    let entityName: String
+    @ObservedObject var viewModel: EntityListViewModel
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        CardView(title: entityName)
+        ScrollView {
+            LazyVStack {
+                ForEach(viewModel.fetchedResults, id: \.objectID) {
+                    entity in
+                    Text(entity.value(forKey: "name") as? String ?? "Unknown")
+                }
+            }
+        }
+        .onAppear {
+            viewModel.fetchEntities(entityName)
+        }
     }
 }
 
 #Preview {
-    EntityListView()
+    let mockViewModel = EntityListViewModel()
+    EntityListView(entityName: "Entity", viewModel: mockViewModel)
 }

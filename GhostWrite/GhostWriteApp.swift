@@ -9,12 +9,11 @@ import SwiftUI
 
 @main
 struct GhostWriteApp: App {
-    
     @StateObject private var coreDataStack = CoreDataStack.shared
     
     var body: some Scene {
         WindowGroup {
-            SettingView()
+            LandingView()
             
                 .environment(\.managedObjectContext,
                                               coreDataStack.persistentContainer.viewContext)
