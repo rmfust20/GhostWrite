@@ -25,6 +25,7 @@ struct SettingView: View {
             Color("Background")
                 .ignoresSafeArea()
             VStack {
+                DismissViewButton(isPresented: $isPresented)
                 Text("Locations")
                     .font(.largeTitle)
                 Button {
@@ -39,11 +40,9 @@ struct SettingView: View {
                 
                 }
             }
-        
         .fullScreenCover(isPresented: $showAddLocation) {
-            LocationEditorView(showAddLocation: $showAddLocation)
-                        
-                }
+                LocationEditorView(isPresented: $showAddLocation)
+            }
         }
     }
 

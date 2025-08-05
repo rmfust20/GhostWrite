@@ -19,24 +19,23 @@ struct WorldBuilderHomeView: View {
             Color("Background")
                 .ignoresSafeArea()
             VStack {
+                DismissViewButton(isPresented: $isPresented)
                 Text("Start Builidng Your World")
                     .font(.largeTitle)
-                    .padding(.top, 40)
-                    .underline()
                 Spacer()
                 TransitionButton(title: "Locations", systemImage: "map.fill", transitionBool: $navigateSetting)
-                CardView(title: "Characters", systemImage: "person.3.fill")
-                CardView(title: "Magic", systemImage: "sparkles")
+                TransitionButton(title: "Characters", systemImage: "person.3.fill", transitionBool: $navigateCharacters)
+                TransitionButton(title: "Magic", systemImage: "sparkles", transitionBool: $navigateMagic)
                 Spacer()
-                Button {
-                    isPresented.toggle()
-                } label: {
-                    Text("Done")
-                        
-                }
             }
             .fullScreenCover(isPresented: $navigateSetting) {
-                SettingView(isPresented: $navigateSetting)
+                EntityListView(entityName: "Location", isPresented: $navigateSetting)
+            }
+            .fullScreenCover(isPresented: $navigateCharacters) {
+                EntityListView(entityName: "Character", isPresented: $navigateCharacters)
+            }
+            .fullScreenCover(isPresented: $navigateMagic) {
+                EntityListView(entityName: "Magic", isPresented: $navigateMagic)
             }
         }
         

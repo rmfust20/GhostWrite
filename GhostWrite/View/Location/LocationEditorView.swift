@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-struct CardItem: Identifiable, Hashable {
-    let id = UUID()
-    let title: String
-    let systemImage: String
-}
 
 struct MainContent: View {
     
@@ -97,23 +92,16 @@ struct CustomCardView : View {
 struct LocationEditorView: View {
     
     @State private var text: String = "hello"
-    @Binding var showAddLocation: Bool
     @State private var selectedCard: CardItem?
+    @Binding var isPresented: Bool
     
     var body: some View {
         ZStack {
             Color("Background")
                 .ignoresSafeArea()
             VStack {
-                Button {
-                    showAddLocation = false
-                } label: {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(.black)
-                        .font(.system(size: 35))
-                        
-                }
-                
+                DismissViewButton(isPresented: $isPresented)
+    
                 MainContent(selectedCard: $selectedCard)
                     
                 
@@ -123,7 +111,7 @@ struct LocationEditorView: View {
 }
 
 #Preview {
-    LocationEditorView(showAddLocation: .constant(false))
+    LocationEditorView(isPresented: .constant(false))
         
 }
 

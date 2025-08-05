@@ -11,6 +11,14 @@ struct TransitionButton: View {
     let title: String
     let systemImage: String?
     @Binding var transitionBool : Bool
+    
+    init(title: String = "Add Card", systemImage: String? = "plus.circle.fill", transitionBool: Binding<Bool>) {
+        self.title = title
+        self.systemImage = systemImage
+        self._transitionBool = transitionBool
+        
+    }
+    
     var body: some View {
         Button {
             transitionBool.toggle() // Placeholder for transition logic

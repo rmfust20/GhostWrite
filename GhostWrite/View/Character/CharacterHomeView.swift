@@ -8,12 +8,14 @@
 import SwiftUI
 
 struct CharacterHomeView: View {
+    @Binding var isPresented: Bool
     var body: some View {
         ZStack {
             Color("Background")
                 .ignoresSafeArea()
             
             VStack {
+                DismissViewButton(isPresented: $isPresented)
                 CardView(title: "Add Character")
                 //Display list of characters
             }
@@ -23,5 +25,6 @@ struct CharacterHomeView: View {
 }
 
 #Preview {
-    CharacterHomeView()
+    CharacterHomeView(isPresented: .constant(true))
+        
 }

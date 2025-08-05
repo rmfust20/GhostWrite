@@ -19,6 +19,19 @@ struct AddInfoView: View {
             Color("Background")
                 .ignoresSafeArea()
             VStack {
+                HStack {
+                    Button {
+                        onDismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.title)
+                            .padding()
+                        
+                        
+                    }
+                    .buttonStyle(.plain)
+                    Spacer()
+                }
                 Text(workingTitle)
                     .font(.title)
                 ZStack(alignment: .topLeading) {
@@ -37,13 +50,6 @@ struct AddInfoView: View {
                         .padding()
                 }
                 AskCasperView()
-
-            }
-            
-            Button {
-                onDismiss()
-            } label: {
-                Image(systemName: "xmark")
 
             }
         }
