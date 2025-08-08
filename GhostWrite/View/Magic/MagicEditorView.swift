@@ -10,6 +10,7 @@ import SwiftUI
 struct MagicEditorView: View {
     @Binding var isPresented: Bool
     @State var selectedCard: CardItem?
+    @ObservedObject var magicViewModel: EntityListViewModel
     
     private let cardItems: [CardItem] = [
         CardItem(title: "Abilities", systemImage: "wind.circle"),
@@ -36,7 +37,8 @@ struct MagicEditorView: View {
             .fullScreenCover(item: $selectedCard) { card in
                 AddInfoView(
                     workingTitle: card.title,
-                    onDismiss: { selectedCard = nil }
+                    onDismiss: { selectedCard = nil },
+                    addInfoViewModel: magicViewModel
                 )
             }
         }
@@ -44,5 +46,6 @@ struct MagicEditorView: View {
 }
 
 #Preview {
-    MagicEditorView(isPresented: .constant(true))
+    MagicEditorView(isPresented: .constant(true),
+    magicViewModel: EntityListViewModel())
 }

@@ -11,6 +11,7 @@ import SwiftUI
 struct MainContent: View {
     
     @Binding var selectedCard: CardItem?
+    @ObservedObject var locationViewModel: EntityListViewModel
     
     private let cardItems: [CardItem] = [
         CardItem(title: "Architecture", systemImage: "door.garage.closed"),
@@ -51,7 +52,8 @@ struct MainContent: View {
                 .fullScreenCover(item: $selectedCard) { card in
                     AddInfoView(
                         workingTitle: card.title,
-                        onDismiss: { selectedCard = nil }
+                        onDismiss: { selectedCard = nil },
+                        addInfoViewModel: locationViewModel
                     )
                 }
             }
@@ -94,6 +96,7 @@ struct LocationEditorView: View {
     @State private var text: String = "hello"
     @State private var selectedCard: CardItem?
     @Binding var isPresented: Bool
+    @ObservedObject var locationViewModel: EntityListViewModel
     
     var body: some View {
         ZStack {
@@ -102,7 +105,7 @@ struct LocationEditorView: View {
             VStack {
                 DismissViewButton(isPresented: $isPresented)
     
-                MainContent(selectedCard: $selectedCard)
+                MainContent(selectedCard: $selectedCard, locationViewModel: locationViewModel)
                     
                 
             }
@@ -111,7 +114,8 @@ struct LocationEditorView: View {
 }
 
 #Preview {
-    LocationEditorView(isPresented: .constant(false))
+    LocationEditorView(isPresented: .constant(false),
+    locationViewModel: EntityListViewModel())
         
 }
 

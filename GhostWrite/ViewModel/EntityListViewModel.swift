@@ -19,7 +19,8 @@ class EntityListViewModel: ObservableObject {
     }
     
     @Published var fetchedResults: [NSManagedObject] = []
-    @Published var workingEntity: WorkingEntity?
+    @Published var workingEntity: NSManagedObject?
+    @Published var workingModel: Encodable?
     
     enum WorkingEntity {
         case location(LocationModel)
@@ -27,13 +28,22 @@ class EntityListViewModel: ObservableObject {
         case character(CharacterModel)
     }
     
-    func setEntity(_ entity: WorkingEntity) {
+    func setWorkingEntity(_ entity: NSManagedObject?) {
         self.workingEntity = entity
     }
+    
     
     func fetchEntities(_ entity: String) {
         self.fetchedResults = coreDataStack.fetchAllRecords(entityName: entity)
     }
+    
+    private func updateEntity(_ entity: NSManagedObject) {
+        guard let dict = try? workingModel!.asDictionary() else { return }
+        entity.setValuesForKeys(dict)
+        coreDataStack.save()
+    }
+    
+    /*
     
     private func saveEntityHelper<T: Encodable>(entityName: String, model: T, name: String) {
         let fetchedRecord = coreDataStack.fetchRecord(entityName: entityName, name: name)
@@ -46,6 +56,9 @@ class EntityListViewModel: ObservableObject {
             }
         }
     }
+     */
+    
+    /*
 
     func saveEntity(_ passedEntity: WorkingEntity) {
         switch passedEntity {
@@ -57,5 +70,12 @@ class EntityListViewModel: ObservableObject {
             saveEntityHelper(entityName: "Character", model: characterModel, name: characterModel.name)
         }
     }
+     
+     */
+    
+    func saveEntity() {
+        
+    }
+    
 }
 

@@ -10,6 +10,7 @@ import SwiftUI
 struct CharacterEditorView: View {
     @Binding var isPresented: Bool
     @State var selectedCard: CardItem?
+    @ObservedObject var characterViewModel: EntityListViewModel
     
     private let cardItems: [CardItem] = [CardItem(title: "Backstory", systemImage: "book.closed.fill"),
                                         CardItem(title: "Personality", systemImage: "person.fill"),
@@ -36,7 +37,8 @@ struct CharacterEditorView: View {
             .fullScreenCover(item: $selectedCard) { card in
                 AddInfoView(
                     workingTitle: card.title,
-                    onDismiss: { selectedCard = nil }
+                    onDismiss: { selectedCard = nil },
+                    addInfoViewModel: characterViewModel
                 )
             }
 
@@ -45,5 +47,5 @@ struct CharacterEditorView: View {
 }
 
 #Preview {
-    CharacterEditorView(isPresented: .constant(true))
+    CharacterEditorView(isPresented: .constant(true), characterViewModel: EntityListViewModel())
 }
