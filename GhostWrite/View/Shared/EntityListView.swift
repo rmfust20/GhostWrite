@@ -25,7 +25,7 @@ struct EntityListView: View {
         case "Magic":
             MagicEditorView(isPresented: $navigateLink, magicViewModel: viewModel)
         case "Chapter":
-            AddInfoView(workingTitle: "Chapter", onDismiss: {
+            AddInfoView(attribute: "Chapter", onDismiss: {
                 navigateLink = false
             }, addInfoViewModel: viewModel)
         default:
@@ -42,8 +42,7 @@ struct EntityListView: View {
                 TransitionButton(title: "Add \(entityName)", transitionBool: $navigateLink)
                     .onTapGesture {
                         viewModel.setWorkingEntity(nil)
-                        // based on the entityName, set the model to the apporiate type
-                        viewModel.setWorkingModel(entityName)
+                        viewModel.setEntityType(entityName)
                     }
                 ScrollView {
                     LazyVStack {
@@ -56,7 +55,7 @@ struct EntityListView: View {
                             )
                             .onTapGesture {
                                 viewModel.setWorkingEntity(entity)
-                                viewModel.setWorkingModel(entityName)
+                                viewModel.setEntityType(entityName)
                             }
                         }
                     }

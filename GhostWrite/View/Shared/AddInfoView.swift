@@ -10,15 +10,19 @@ import SwiftUI
 struct SaveButtonView: View {
     @ObservedObject var addInfoViewModel: EntityListViewModel
     @Binding var text: String
+    @Binding var isPresented: Bool
+    let attribute: String
     var body: some View {
         Button {
             //Check if this is the first entry
             if addInfoViewModel.workingEntity == nil {
                 //Save the new entity using the save function
-                addInfoViewModel.constructModel(from: text)
+                //PromptUserToNameEntity
+                isPresented = true
             }
             else {
                 //Simply update the exisitng entity
+                addInfoViewModel.updateEntity(text: text, attribute: attribute)
                 
             }
         } label: {
@@ -29,13 +33,63 @@ struct SaveButtonView: View {
     }
 }
 
+import SwiftUI
+
+struct PromptUserToNameEntity: View {
+    @ObservedObject var addInfoViewModel: EntityListViewModel
+    @State private var entityName: String = ""
+    @Binding var isPresented: Bool
+    @Binding var text: String
+    let attribute : String
+
+    var body: some View {
+        if isPresented {
+            ZStack {
+                // Blurred and dimmed background
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .blur(radius: 8)
+
+                // Popup content
+                VStack(spacing: 16) {
+                    Text("Enter Entity Name")
+                        .font(.headline)
+                    TextField("Name", text: $entityName)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .padding(.horizontal)
+                    HStack {
+                        Button("Cancel") {
+                            isPresented = false
+                        }
+                        Spacer()
+                        Button("Save") {
+                            // Handle save action here
+                            addInfoViewModel.saveEntity(text: text, attribute: attribute, name: entityName)
+                            isPresented = false
+                        }
+                    }
+                    .padding(.horizontal)
+                }
+                .padding()
+                .background(.ultraThinMaterial)
+                .cornerRadius(16)
+                .shadow(radius: 10)
+                .frame(maxWidth: 300)
+            }
+            .transition(.opacity)
+            .animation(.easeInOut, value: isPresented)
+        }
+    }
+}
+
 struct AddInfoView: View {
     
-    let workingTitle : String
+    let attribute : String
     @State private var text : String = ""
     @State private var previewText: String? = "Start Writing..."
     var onDismiss: () -> Void = {}
     @ObservedObject var addInfoViewModel : EntityListViewModel
+    @State private var showNamePrompt = false
     
     var body: some View {
         ZStack {
@@ -54,9 +108,10 @@ struct AddInfoView: View {
                     }
                     .buttonStyle(.plain)
                     Spacer()
-                    SaveButtonView(addInfoViewModel: addInfoViewModel, text: $text)
+                    SaveButtonView(addInfoViewModel: addInfoViewModel, text: $text, isPresented: $showNamePrompt ,attribute: attribute)
+                        
                 }
-                Text(workingTitle)
+                Text(attribute)
                     .font(.title)
                 ZStack(alignment: .topLeading) {
                     if text.isEmpty {
@@ -76,10 +131,11 @@ struct AddInfoView: View {
                 AskCasperView()
 
             }
+            PromptUserToNameEntity(addInfoViewModel: addInfoViewModel,isPresented: $showNamePrompt, text: $text, attribute: attribute)
         }
     }
 }
 
 #Preview {
-    AddInfoView(workingTitle: "Culture", addInfoViewModel: EntityListViewModel())
+    AddInfoView(attribute: "Culture", addInfoViewModel: EntityListViewModel())
 }

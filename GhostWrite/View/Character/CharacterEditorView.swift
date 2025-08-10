@@ -36,7 +36,7 @@ struct CharacterEditorView: View {
             // In MainContent (PreviewTestView.swift)
             .fullScreenCover(item: $selectedCard) { card in
                 AddInfoView(
-                    workingTitle: card.title,
+                    attribute: card.title,
                     onDismiss: { selectedCard = nil },
                     addInfoViewModel: characterViewModel
                 )

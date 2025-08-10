@@ -44,7 +44,16 @@ struct LocationModel: Encodable {
         self.general = general
     }
     
-    func ChangeOneAttribute(_ attribute: String, value: String) -> LocationModel {
+    init() {
+        self.name = ""
+        self.architecture = ""
+        self.importantPeople = ""
+        self.history = ""
+        self.culture = ""
+        self.general = ""
+    }
+    
+    func changeOneAttribute(_ attribute: String, value: String) -> LocationModel {
         switch attribute {
         case "architecture":
             return LocationModel(
