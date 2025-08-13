@@ -9,11 +9,12 @@ import Foundation
 import CoreData
 
 class ContextManager {
-    
+    static let shared = ContextManager()
     private let embeddingService: EmbeddingService
     private let coreDataStack: CoreDataStack
+    private let gptService: OpenAIService = OpenAIService.shared
     
-    init(embeddingService: EmbeddingService = EmbeddingService(), coreDataStack: CoreDataStack = CoreDataStack.shared) {
+    private init(embeddingService: EmbeddingService = EmbeddingService.shared, coreDataStack: CoreDataStack = CoreDataStack.shared) {
         self.embeddingService = embeddingService
         self.coreDataStack = coreDataStack
     }
@@ -25,11 +26,23 @@ class ContextManager {
         return dotProduct / (magnitudeA * magnitudeB)
     }
     
-    func findRelevantContexts(_ prompt: String) async throws {
+    func createSummaryAsEmbedding(model : String) async throws -> [Float]? {
+        let prompt = "You are a working on a RAG pipeline. Summarize the following model in a concise way that is optimal for semantic understanding and retrival. Do not include any extraneous information. Your response should only be a short summary of the model. Here is the model:\n\n\(model)"
+        
+        let response = try await gptService.sendMessage(prompt: prompt)
+        
+        if let validResponse = response {
+            let summary = try await embeddingService.embed(validResponse)
+            return summary
+        }
+        return nil
+    }
+    
+    func grabRelevantContext() {
         
     }
     
-    func addContext(_ context: [String]) {
-        // given the relevant context, prepare the query for the LLM
+    func generatePrompt()  {
+        //this is the G in RAG
     }
 }

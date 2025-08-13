@@ -13,9 +13,13 @@ class EntityListViewModel: ObservableObject {
     //and I can use this to create settingView, MagicView, and characterView
     
     private let coreDataStack: CoreDataStack
+    private let embeddingService: EmbeddingService
+    private let contextManager: ContextManager
    
-    init(coreDataStack: CoreDataStack = CoreDataStack.shared) {
+    init(coreDataStack: CoreDataStack = CoreDataStack.shared, embeddingService: EmbeddingService = EmbeddingService.shared, contextManager: ContextManager = ContextManager.shared) {
         self.coreDataStack = coreDataStack
+        self.embeddingService = embeddingService
+        self.contextManager = contextManager
     }
     
     @Published var entityType: String = ""
@@ -98,26 +102,48 @@ class EntityListViewModel: ObservableObject {
         self.fetchedResults = coreDataStack.fetchAllRecords(entityName: entity)
     }
     
-    func updateEntity(text: String, attribute: String) {
-        constructModelFromText(text: text, attribute: attribute)
-        guard let dict = try? unWrapWorkingModel().asDictionary() else { return }
+    func updateEntity(text: String, attribute: String) async {
         if let workingEntity = workingEntity {
-            workingEntity.setValuesForKeys(dict)
-            coreDataStack.save()
+            constructModelFromText(text: text, attribute: attribute)
+            if let dict = try? await generateEncoding() {
+                workingEntity.setValuesForKeys(dict)
+                coreDataStack.save()
+            }
         }
     }
     
-    func saveEntity(text: String, attribute: String, name: String) {
+    func saveEntity(text: String, attribute: String, name: String) async {
         constructModelFromText(text: text, attribute: attribute)
         let fetchedRecord = coreDataStack.fetchRecord(entityName: entityType, name: name)
         if fetchedRecord == nil {
             let context = coreDataStack.persistentContainer.viewContext
             let newObject = NSEntityDescription.insertNewObject(forEntityName: entityType, into: context)
-            if let dict = try? unWrapWorkingModel().asDictionary() {
+            if let dict = try? await generateEncoding() {
                 newObject.setValuesForKeys(dict)
+                // around here we would call our embed method to embed the model
                 coreDataStack.save()
             }
         }
+    }
+    
+    func generateEncoding() async throws -> [String: Any] {
+        guard var modelAsDict = try? unWrapWorkingModel().asDictionary() else {
+            throw EncodingError.modelConversionFailed
+        }
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: modelAsDict),
+              let jsonString = String(data: jsonData, encoding: .utf8) else {
+            throw EncodingError.jsonEncodingFailed
+        }
+        guard let embeddedSummary = try await contextManager.createSummaryAsEmbedding(model: jsonString) else {
+            throw EncodingError.embeddingFailed
+        }
+        modelAsDict["embedding"] = embeddedSummary
+        return modelAsDict
+    }
+    
+        
+    func updateEncoding() {
+        
     }
 }
 

@@ -25,6 +25,8 @@ struct OpenAIChatResponse: Codable {
 }
 
 class OpenAIService {
+    static let shared = OpenAIService()
+    private init() {}
     private var apiKey: String {
         guard
             let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),
@@ -40,46 +42,28 @@ class OpenAIService {
     
     private let endpoint = "https://api.openai.com/v1/chat/completions"
     
-    func sendMessage(prompt: String, completion: @escaping (String?) -> Void) {
+    func sendMessage(prompt: String) async throws -> String? {
         let messages = [Message(role: "user", content: prompt)]
         let requestBody = OpenAIChatRequest(model: "gpt-3.5-turbo", messages: messages)
 
-        guard let url = URL(string: endpoint),
-              let data = try? JSONEncoder().encode(requestBody) else {
-            print("Failed to encode request body or invalid URL")
-            completion(nil)
-            return
+        guard let url = URL(string: endpoint) else {
+            throw URLError(.badURL)
         }
-
+        let data = try JSONEncoder().encode(requestBody)
+        
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = data
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let error = error {
-                print("Network error:", error)
-                completion(nil)
-                return
-            }
-            if let httpResponse = response as? HTTPURLResponse {
-                print("HTTP status code:", httpResponse.statusCode)
-            }
-            guard let data = data else {
-                print("No data received")
-                completion(nil)
-                return
-            }
-            do {
-                let decoded = try JSONDecoder().decode(OpenAIChatResponse.self, from: data)
-                let response = decoded.choices.first?.message.content
-                completion(response)
-            } catch {
-                print("Decoding error:", error)
-                print("Raw response:", String(data: data, encoding: .utf8) ?? "N/A")
-                completion(nil)
-            }
-        }.resume()
+        
+        let (responseData, response) = try await URLSession.shared.data(for: request)
+        
+        if let httpResponse = response as? HTTPURLResponse {
+            print("HTTP status code:", httpResponse.statusCode)
+        }
+        
+        let decoded = try JSONDecoder().decode(OpenAIChatResponse.self, from: responseData)
+        return decoded.choices.first?.message.content
     }
 }

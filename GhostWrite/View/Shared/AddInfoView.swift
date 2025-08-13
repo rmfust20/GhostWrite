@@ -22,7 +22,9 @@ struct SaveButtonView: View {
             }
             else {
                 //Simply update the exisitng entity
-                addInfoViewModel.updateEntity(text: text, attribute: attribute)
+                Task {
+                    await addInfoViewModel.updateEntity(text: text, attribute: attribute)
+                }
                 
             }
         } label: {
@@ -64,7 +66,9 @@ struct PromptUserToNameEntity: View {
                         Spacer()
                         Button("Save") {
                             // Handle save action here
-                            addInfoViewModel.saveEntity(text: text, attribute: attribute, name: entityName)
+                            Task {
+                                await addInfoViewModel.saveEntity(text: text, attribute: attribute, name: entityName)
+                            }
                             isPresented = false
                         }
                     }

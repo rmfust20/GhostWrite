@@ -1,6 +1,8 @@
 import Foundation
 
 class EmbeddingService {
+    static let shared = EmbeddingService()
+    private init() {}
     private var apiKey: String {
         guard
             let url = Bundle.main.url(forResource: "Secrets", withExtension: "plist"),

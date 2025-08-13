@@ -18,3 +18,9 @@ extension Encodable {
     }
 }
 
+enum EncodingError: Error {
+    case modelConversionFailed
+    case jsonEncodingFailed
+    case embeddingFailed
+}
+
