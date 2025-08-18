@@ -15,6 +15,7 @@ class EntityListViewModel: ObservableObject {
     private let coreDataStack: CoreDataStack
     private let embeddingService: EmbeddingService
     private let contextManager: ContextManager
+    
    
     init(coreDataStack: CoreDataStack = CoreDataStack.shared, embeddingService: EmbeddingService = EmbeddingService.shared, contextManager: ContextManager = ContextManager.shared) {
         self.coreDataStack = coreDataStack
@@ -41,13 +42,13 @@ class EntityListViewModel: ObservableObject {
         self.entityType = type
     }
     
-    func constructModelFromText(text: String, attribute: String) {
+    func constructModelFromText(text: String, attribute: String, name: String) {
         //first check if workingModel is nil
         
         switch entityType {
         case "Location":
             if workingModel == nil {
-                let locationModel = LocationModel()
+                let locationModel = LocationModel(name: name, architecture: "", importantPeople: "", history: "", culture: "", general: "")
                 workingModel = .location(locationModel.changeOneAttribute(attribute, value: text))
             }
             else {
@@ -58,7 +59,7 @@ class EntityListViewModel: ObservableObject {
             }
         case "Magic":
             if workingModel == nil {
-                let magicModel = MagicModel()
+                let magicModel = MagicModel(name: name, abilities: "", limitations: "")
                 workingModel = .magic(magicModel.changeOneAttribute(attribute, value: text))
             }
             else {
@@ -69,7 +70,7 @@ class EntityListViewModel: ObservableObject {
             }
         case "Character":
             if workingModel == nil {
-                let characterModel = CharacterModel()
+                let characterModel = CharacterModel(name: name, backstory: "", motivation: "", personality: "")
                 workingModel = .character(characterModel.changeOneAttribute(attribute, value: text))
             }
             else {
@@ -102,9 +103,10 @@ class EntityListViewModel: ObservableObject {
         self.fetchedResults = coreDataStack.fetchAllRecords(entityName: entity)
     }
     
+    @MainActor
     func updateEntity(text: String, attribute: String) async {
         if let workingEntity = workingEntity {
-            constructModelFromText(text: text, attribute: attribute)
+            constructModelFromText(text: text, attribute: attribute, name: workingEntity.value(forKey: "name") as? String ?? "")
             if let dict = try? await generateEncoding() {
                 workingEntity.setValuesForKeys(dict)
                 coreDataStack.save()
@@ -112,8 +114,9 @@ class EntityListViewModel: ObservableObject {
         }
     }
     
+    @MainActor
     func saveEntity(text: String, attribute: String, name: String) async {
-        constructModelFromText(text: text, attribute: attribute)
+        constructModelFromText(text: text, attribute: attribute, name: name)
         let fetchedRecord = coreDataStack.fetchRecord(entityName: entityType, name: name)
         if fetchedRecord == nil {
             let context = coreDataStack.persistentContainer.viewContext
@@ -137,13 +140,9 @@ class EntityListViewModel: ObservableObject {
         guard let embeddedSummary = try await contextManager.createSummaryAsEmbedding(model: jsonString) else {
             throw EncodingError.embeddingFailed
         }
-        modelAsDict["embedding"] = embeddedSummary
+        let coreDataSummary = try? JSONEncoder().encode(embeddedSummary)
+        modelAsDict["embedding"] = coreDataSummary
         return modelAsDict
-    }
-    
-        
-    func updateEncoding() {
-        
     }
 }
 

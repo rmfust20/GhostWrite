@@ -7,13 +7,16 @@
 
 import SwiftUI
 import CoreData
+import Combine
 
 struct EntityListView: View {
     
     let entityName: String
     @State private var navigateLink: Bool = false
     @Binding var isPresented: Bool
-    @StateObject var viewModel = EntityListViewModel()
+    @ObservedObject var viewModel: EntityListViewModel
+    
+    
     
     @ViewBuilder
     private var destinationView: some View {
@@ -33,29 +36,40 @@ struct EntityListView: View {
         }
     }
     
+    private func handleAddTap() {
+        viewModel.setWorkingEntity(nil)
+        viewModel.setEntityType(entityName)
+        navigateLink = true
+        }
+    
+
+    private func handleEntityTap(_ entity: NSManagedObject) {
+        viewModel.setWorkingEntity(entity)
+        viewModel.setEntityType(entityName)
+        navigateLink = true
+    }
+
+    
     var body: some View {
         ZStack {
             Color("Background")
                 .ignoresSafeArea()
             VStack {
                 DismissViewButton(isPresented: $isPresented)
-                TransitionButton(title: "Add \(entityName)", transitionBool: $navigateLink)
+                CardView(title: "Add \(entityName)")
                     .onTapGesture {
-                        viewModel.setWorkingEntity(nil)
-                        viewModel.setEntityType(entityName)
+                        handleAddTap()
                     }
                 ScrollView {
                     LazyVStack {
                         ForEach(viewModel.fetchedResults, id: \.objectID) {
                             entity in
-                            TransitionButton(
+                            CardView(
                                 title:(entity.value(forKey: "name") as? String ?? "Unknown"),
-                                systemImage: nil,
-                                transitionBool: $navigateLink
+                                systemImage: nil
                             )
                             .onTapGesture {
-                                viewModel.setWorkingEntity(entity)
-                                viewModel.setEntityType(entityName)
+                                handleEntityTap(entity)
                             }
                         }
                     }
@@ -69,8 +83,10 @@ struct EntityListView: View {
             }
         }
     }
+    
 }
 
+
 #Preview {
-    EntityListView(entityName: "Chapter", isPresented: .constant(true))
+    EntityListView(entityName: "Chapter", isPresented: .constant(true), viewModel: EntityListViewModel())
 }

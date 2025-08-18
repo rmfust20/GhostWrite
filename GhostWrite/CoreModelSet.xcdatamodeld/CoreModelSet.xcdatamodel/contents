@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
     <entity name="Chapter" representedClassName="Chapter" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="context" optional="YES" attributeType="String"/>
+        <attribute name="embedding" optional="YES" attributeType="Binary"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="paragraphs" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Character" representedClassName="Character" syncable="YES" codeGenerationType="class">
+        <attribute name="backstory" optional="YES" attributeType="String"/>
+        <attribute name="context" optional="YES" attributeType="String"/>
+        <attribute name="embedding" optional="YES" attributeType="Binary"/>
+        <attribute name="motivation" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-    </entity>
-    <entity name="Embeddings" representedClassName="Embeddings" syncable="YES" codeGenerationType="class">
-        <attribute name="embedding" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-    </entity>
-    <entity name="Entity" representedClassName="Entity" syncable="YES" codeGenerationType="class">
-        <attribute name="embedding" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="YES"/>
-        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="personality" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Location" representedClassName="Location" syncable="YES" codeGenerationType="class">
-        <attribute name="lore" optional="YES" attributeType="String"/>
+        <attribute name="architecture" optional="YES" attributeType="String"/>
+        <attribute name="context" optional="YES" attributeType="String"/>
+        <attribute name="culture" optional="YES" attributeType="String"/>
+        <attribute name="embedding" optional="YES" attributeType="Binary"/>
+        <attribute name="general" optional="YES" attributeType="String"/>
+        <attribute name="history" optional="YES" attributeType="String"/>
+        <attribute name="importantPeople" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>
     <entity name="Magic" representedClassName="Magic" syncable="YES" codeGenerationType="class">
+        <attribute name="abilities" optional="YES" attributeType="String"/>
+        <attribute name="context" optional="YES" attributeType="String"/>
+        <attribute name="embedding" optional="YES" attributeType="Binary"/>
+        <attribute name="limitations" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
     </entity>
 </model>

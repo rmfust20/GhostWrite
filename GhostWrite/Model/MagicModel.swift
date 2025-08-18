@@ -5,6 +5,15 @@ struct MagicModel: Encodable {
     let name: String
     let abilities: String
     let limitations: String
+    var context: String {
+        """
+        Name: \(name)
+        Abilities: \(abilities)
+        Limitations: \(limitations)
+        """
+    }
+    
+    var embedding: Data? = nil
 
     init?(entity: NSManagedObject) {
         guard

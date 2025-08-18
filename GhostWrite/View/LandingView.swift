@@ -11,6 +11,7 @@ struct LandingView: View {
     
     @State private var navigateWrite = false
     @State private var navigateBuild = false
+    @StateObject var viewModel = EntityListViewModel()
     
     var body: some View {
         ZStack {
@@ -34,10 +35,10 @@ struct LandingView: View {
                 Spacer()
             }
             .fullScreenCover(isPresented: $navigateWrite) {
-                EntityListView(entityName: "Chapter", isPresented: $navigateWrite)
+                EntityListView(entityName: "Chapter", isPresented: $navigateWrite, viewModel: viewModel)
             }
             .fullScreenCover(isPresented: $navigateBuild) {
-                WorldBuilderHomeView(isPresented: $navigateBuild)
+                WorldBuilderHomeView(isPresented: $navigateBuild, viewModel: viewModel)
                 
             }
         }

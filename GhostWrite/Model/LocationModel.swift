@@ -15,6 +15,17 @@ struct LocationModel: Encodable {
     var history: String
     var culture: String
     var general: String
+    var context: String {
+            """
+            Name: \(name)
+            Architecture: \(architecture)
+            Important People: \(importantPeople)
+            History: \(history)
+            Culture: \(culture)
+            General: \(general)
+            """
+        }
+    var embedding: Data? = nil
     
     init?(entity: NSManagedObject) {
         guard

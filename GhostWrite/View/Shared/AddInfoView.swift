@@ -95,6 +95,15 @@ struct AddInfoView: View {
     @ObservedObject var addInfoViewModel : EntityListViewModel
     @State private var showNamePrompt = false
     
+    private var titleText: String {
+        let name = addInfoViewModel.workingEntity?.value(forKey: "name") as? String
+        if attribute == "Chapter" {
+            return (name ?? "Chapter")
+        } else {
+            return (name ?? "") + " " + attribute
+        }
+    }
+    
     var body: some View {
         ZStack {
             Color("Background")
@@ -115,7 +124,10 @@ struct AddInfoView: View {
                     SaveButtonView(addInfoViewModel: addInfoViewModel, text: $text, isPresented: $showNamePrompt ,attribute: attribute)
                         
                 }
-                Text(attribute)
+                Text(
+                    titleText
+                )
+                .font(.title)
                     .font(.title)
                 ZStack(alignment: .topLeading) {
                     if text.isEmpty {
@@ -136,6 +148,11 @@ struct AddInfoView: View {
 
             }
             PromptUserToNameEntity(addInfoViewModel: addInfoViewModel,isPresented: $showNamePrompt, text: $text, attribute: attribute)
+            
+        }
+        .onAppear {
+            text = attribute == "Chapter" ? (addInfoViewModel.workingEntity?.value(forKey: "content") as? String ?? "") : (addInfoViewModel.workingEntity?.value(forKey: attribute) as? String ?? "")
+            print(addInfoViewModel.workingEntity?.value(forKey: attribute) as? String ?? "No Name")
         }
     }
 }

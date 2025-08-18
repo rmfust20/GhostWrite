@@ -57,6 +57,9 @@ struct MainContent: View {
                     )
                 }
             }
+            .onAppear {
+                locationViewModel.setEntityType("Location")
+            }
         }
     }
 

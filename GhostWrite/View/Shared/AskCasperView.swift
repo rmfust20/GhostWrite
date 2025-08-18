@@ -59,7 +59,7 @@ struct AskCasperView: View {
                 .stroke(lineWidth: 1)
         )
         .padding()
-        .frame(width:.infinity, height: 200)
+        .frame(maxWidth: .infinity, maxHeight: 200)
     }
 }
 

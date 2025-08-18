@@ -13,6 +13,7 @@ struct WorldBuilderHomeView: View {
     @State private var navigateSetting : Bool = false
     @State private var navigateCharacters : Bool = false
     @State private var navigateMagic : Bool = false
+    @ObservedObject var viewModel: EntityListViewModel
     
     var body: some View {
         ZStack {
@@ -29,13 +30,13 @@ struct WorldBuilderHomeView: View {
                 Spacer()
             }
             .fullScreenCover(isPresented: $navigateSetting) {
-                EntityListView(entityName: "Location", isPresented: $navigateSetting)
+                EntityListView(entityName: "Location", isPresented: $navigateSetting, viewModel: viewModel)
             }
             .fullScreenCover(isPresented: $navigateCharacters) {
-                EntityListView(entityName: "Character", isPresented: $navigateCharacters)
+                EntityListView(entityName: "Character", isPresented: $navigateCharacters, viewModel: viewModel)
             }
             .fullScreenCover(isPresented: $navigateMagic) {
-                EntityListView(entityName: "Magic", isPresented: $navigateMagic)
+                EntityListView(entityName: "Magic", isPresented: $navigateMagic, viewModel: viewModel)
             }
         }
         
@@ -44,5 +45,5 @@ struct WorldBuilderHomeView: View {
 
 
 #Preview {
-    WorldBuilderHomeView(isPresented: .constant(true))
+    WorldBuilderHomeView(isPresented: .constant(true), viewModel: EntityListViewModel())
 }

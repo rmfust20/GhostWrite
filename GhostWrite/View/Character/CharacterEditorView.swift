@@ -14,7 +14,7 @@ struct CharacterEditorView: View {
     
     private let cardItems: [CardItem] = [CardItem(title: "Backstory", systemImage: "book.closed.fill"),
                                         CardItem(title: "Personality", systemImage: "person.fill"),
-                                        CardItem(title: "Motivations", systemImage: "heart.fill")]
+                                        CardItem(title: "Motivation", systemImage: "heart.fill")]
     
     var body: some View {
         ZStack {
@@ -36,12 +36,16 @@ struct CharacterEditorView: View {
             // In MainContent (PreviewTestView.swift)
             .fullScreenCover(item: $selectedCard) { card in
                 AddInfoView(
-                    attribute: card.title,
+                    attribute: card.title.lowercased(),
                     onDismiss: { selectedCard = nil },
                     addInfoViewModel: characterViewModel
                 )
             }
 
+        }
+        .onAppear {
+            print("helo")
+            print(characterViewModel.entityType)
         }
     }
 }

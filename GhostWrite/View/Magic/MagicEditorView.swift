@@ -42,6 +42,9 @@ struct MagicEditorView: View {
                 )
             }
         }
+        .onAppear {
+            magicViewModel.setEntityType("Magic")
+        }
     }
 }
 
