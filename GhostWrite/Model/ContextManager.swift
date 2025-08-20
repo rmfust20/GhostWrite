@@ -32,6 +32,7 @@ class ContextManager {
         let response = try await gptService.sendMessage(prompt: prompt)
         
         if let validResponse = response {
+            print("valid response is \(validResponse)" )
             let summary = try await embeddingService.embed(validResponse)
             return summary
         }
@@ -77,13 +78,29 @@ class ContextManager {
     }
     
     func generatePrompt(query: String) async -> String?{
+        print("triggered")
         //Given a list of relevant embeddings, we will generate a prompt
         let relevantContext: [NSManagedObject]? = try? await grabRelevantContext(query: query)
         
         if let context = relevantContext {
             var contextAsString = ""
             context.forEach {record in
-                contextAsString += record.value(forKey: "context") as? String ?? "" + "\n\n"
+                switch record.entity.name {
+                case "Character":
+                    if let chapter = CharacterModel(entity: record) {
+                        contextAsString += chapter.context + "\n"
+                    }
+                case "Magic":
+                    if let magic = MagicModel(entity: record) {
+                        contextAsString += magic.context + "\n"
+                    }
+                case "Location":
+                    if let location = LocationModel(entity: record) {
+                        contextAsString += location.context + "\n"
+                    }
+                default:
+                    print("Unknown entity type: \(record.entity.name ?? "Unknown")")
+                }
             }
             
             let prompt = "You are a fantasy novel editor. Given the following context, please do one of the following tasks based on the user's query. 1: Answer the user's query based on the context. 2: Generate a new piece of content based on the context. 3: Provide feedback on the context. 4: Help the user brainstorm new ideas based on the context. 5: Rewrite the users query to help improve their writing. 6: If you are not sure what to do or the context is not relevant, answer to the best of your ability but do not make up any information about the context that isn't true. Here is the context:\n\n\(contextAsString)\n\n Here is the user's query: \(query)"
@@ -94,5 +111,9 @@ class ContextManager {
     
         return try? await gptService.sendMessage(prompt: query)
         
+    }
+    
+    func quickTest(query: String) async -> String?{
+        return try? await gptService.sendMessage(prompt: query)
     }
 }

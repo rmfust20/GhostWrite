@@ -94,6 +94,8 @@ struct AddInfoView: View {
     var onDismiss: () -> Void = {}
     @ObservedObject var addInfoViewModel : EntityListViewModel
     @State private var showNamePrompt = false
+    @State private var flexHeight: CGFloat = .infinity
+    @State private var isExpanded: Bool = true
     
     private var titleText: String {
         let name = addInfoViewModel.workingEntity?.value(forKey: "name") as? String
@@ -129,6 +131,7 @@ struct AddInfoView: View {
                 )
                 .font(.title)
                     .font(.title)
+                
                 ZStack(alignment: .topLeading) {
                     if text.isEmpty {
                         Text(previewText ?? "")
@@ -136,14 +139,22 @@ struct AddInfoView: View {
                             .padding(.horizontal,20)
                             .padding(.vertical, 23)
                     }
-                    TextEditor(text: $text)
-                        .scrollContentBackground(.hidden)
-                        .background(
-                            RoundedRectangle(cornerRadius: 12)
-                                .stroke(lineWidth: 1)
-                        )
-                        .padding()
+                        TextEditor(text: $text)
+                            .scrollContentBackground(.hidden)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(lineWidth: 1)
+                            )
+                            .frame(maxHeight: flexHeight)
+                            .padding()
+                            .overlay(
+                                ExpandView(isExpanded: $isExpanded, flexHeight: $flexHeight, baseHeight: 200)
+                                    .padding(24),
+                            alignment: .bottomLeading
+                                )
+                            
                 }
+                Spacer()
                 AskCasperView()
 
             }
