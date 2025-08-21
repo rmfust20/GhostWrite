@@ -35,7 +35,7 @@ struct LandingView: View {
                 Spacer()
             }
             .fullScreenCover(isPresented: $navigateWrite) {
-                EntityListView(entityName: "Chapter", isPresented: $navigateWrite, viewModel: viewModel)
+                EntityListView(entityType: "Chapter", isPresented: $navigateWrite, viewModel: viewModel)
             }
             .fullScreenCover(isPresented: $navigateBuild) {
                 WorldBuilderHomeView(isPresented: $navigateBuild, viewModel: viewModel)

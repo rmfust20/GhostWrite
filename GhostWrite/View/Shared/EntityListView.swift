@@ -11,7 +11,7 @@ import Combine
 
 struct EntityListView: View {
     
-    let entityName: String
+    let entityType: String
     @State private var navigateLink: Bool = false
     @Binding var isPresented: Bool
     @ObservedObject var viewModel: EntityListViewModel
@@ -20,7 +20,7 @@ struct EntityListView: View {
     
     @ViewBuilder
     private var destinationView: some View {
-        switch entityName {
+        switch entityType {
         case "Location":
             LocationEditorView(isPresented: $navigateLink, locationViewModel: viewModel)
         case "Character":
@@ -38,14 +38,14 @@ struct EntityListView: View {
     
     private func handleAddTap() {
         viewModel.setWorkingEntity(nil)
-        viewModel.setEntityType(entityName)
+        viewModel.setEntityType(entityType)
         navigateLink = true
         }
     
 
     private func handleEntityTap(_ entity: NSManagedObject) {
         viewModel.setWorkingEntity(entity)
-        viewModel.setEntityType(entityName)
+        viewModel.setEntityType(entityType)
         navigateLink = true
     }
 
@@ -56,7 +56,7 @@ struct EntityListView: View {
                 .ignoresSafeArea()
             VStack {
                 DismissViewButton(isPresented: $isPresented)
-                CardView(title: "Add \(entityName)")
+                CardView(title: "Add \(entityType)")
                     .onTapGesture {
                         handleAddTap()
                     }
@@ -75,7 +75,7 @@ struct EntityListView: View {
                     }
                 }
                 .onAppear {
-                    viewModel.fetchEntities(entityName)
+                    viewModel.fetchEntities(entityType)
                 }
                 .fullScreenCover(isPresented: $navigateLink) {
                     destinationView
@@ -88,5 +88,5 @@ struct EntityListView: View {
 
 
 #Preview {
-    EntityListView(entityName: "Chapter", isPresented: .constant(true), viewModel: EntityListViewModel())
+    EntityListView(entityType: "Chapter", isPresented: .constant(true), viewModel: EntityListViewModel())
 }

@@ -116,6 +116,7 @@ class EntityListViewModel: ObservableObject {
     
     @MainActor
     func saveEntity(text: String, attribute: String, name: String) async {
+        workingModel = nil
         constructModelFromText(text: text, attribute: attribute, name: name)
         let fetchedRecord = coreDataStack.fetchRecord(entityName: entityType, name: name)
         if fetchedRecord == nil {

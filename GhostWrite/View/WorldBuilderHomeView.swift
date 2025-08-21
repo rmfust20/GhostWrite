@@ -30,13 +30,13 @@ struct WorldBuilderHomeView: View {
                 Spacer()
             }
             .fullScreenCover(isPresented: $navigateSetting) {
-                EntityListView(entityName: "Location", isPresented: $navigateSetting, viewModel: viewModel)
+                EntityListView(entityType: "Location", isPresented: $navigateSetting, viewModel: viewModel)
             }
             .fullScreenCover(isPresented: $navigateCharacters) {
-                EntityListView(entityName: "Character", isPresented: $navigateCharacters, viewModel: viewModel)
+                EntityListView(entityType: "Character", isPresented: $navigateCharacters, viewModel: viewModel)
             }
             .fullScreenCover(isPresented: $navigateMagic) {
-                EntityListView(entityName: "Magic", isPresented: $navigateMagic, viewModel: viewModel)
+                EntityListView(entityType: "Magic", isPresented: $navigateMagic, viewModel: viewModel)
             }
         }
         

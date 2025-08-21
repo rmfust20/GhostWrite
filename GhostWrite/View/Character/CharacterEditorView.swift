@@ -37,7 +37,10 @@ struct CharacterEditorView: View {
             .fullScreenCover(item: $selectedCard) { card in
                 AddInfoView(
                     attribute: card.title.lowercased(),
-                    onDismiss: { selectedCard = nil },
+                    onDismiss: {
+                        selectedCard = nil
+                        characterViewModel.fetchEntities(characterViewModel.entityType)
+                    },
                     addInfoViewModel: characterViewModel
                 )
             }
