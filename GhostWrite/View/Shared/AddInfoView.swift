@@ -42,6 +42,7 @@ struct PromptUserToNameEntity: View {
     @State private var entityName: String = ""
     @Binding var isPresented: Bool
     @Binding var text: String
+    @State private var saveResultString: String = ""
     let attribute : String
 
     var body: some View {
@@ -59,6 +60,8 @@ struct PromptUserToNameEntity: View {
                     TextField("Name", text: $entityName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.horizontal)
+                    Text(saveResultString)
+                        .foregroundStyle(Color.red)
                     HStack {
                         Button("Cancel") {
                             isPresented = false
@@ -67,12 +70,57 @@ struct PromptUserToNameEntity: View {
                         Button("Save") {
                             // Handle save action here
                             Task {
-                                await addInfoViewModel.saveEntity(text: text, attribute: attribute, name: entityName)
+                                saveResultString =  await addInfoViewModel.saveEntity(text: text, attribute: attribute, name: entityName)
+                                if saveResultString == "success" {
+                                    isPresented = false
+                                }
                             }
-                            isPresented = false
                         }
                     }
                     .padding(.horizontal)
+                }
+                .padding()
+                .background(.ultraThinMaterial)
+                .cornerRadius(16)
+                .shadow(radius: 10)
+                .frame(maxWidth: 300)
+            }
+            .transition(.opacity)
+            .animation(.easeInOut, value: isPresented)
+        }
+    }
+}
+
+struct UnsavedChangesView: View {
+    @Binding var isPresented: Bool
+    @Binding var onDismiss: () -> Void
+    var body: some View {
+        if isPresented {
+            ZStack {
+                // Blurred and dimmed background
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                    .blur(radius: 8)
+                VStack{
+                    Text("Are you sure you want to quit? You have unsaved changes")
+                        .font(.title3)
+                        .multilineTextAlignment(.center)
+                    HStack {
+                        Button {
+                            isPresented = false
+                            onDismiss()
+                        } label: {
+                            Text("Yes")
+                        }
+                        Spacer()
+                        Button {
+                            isPresented = false
+                            
+                        } label: {
+                            Text("No")
+                        }
+                    }
+                    .padding()
                 }
                 .padding()
                 .background(.ultraThinMaterial)
@@ -91,18 +139,19 @@ struct AddInfoView: View {
     let attribute : String
     @State private var text : String = ""
     @State private var previewText: String? = "Start Writing..."
-    var onDismiss: () -> Void = {}
+    @State var onDismiss: () -> Void = {}
     @ObservedObject var addInfoViewModel : EntityListViewModel
     @State private var showNamePrompt = false
     @State private var flexHeight: CGFloat = .infinity
     @State private var isExpanded: Bool = true
+    @State private var showUnsavedChangesPrompt = false
     
     private var titleText: String {
         let name = addInfoViewModel.workingEntity?.value(forKey: "name") as? String
-        if attribute == "Chapter" {
-            return (name ?? "Chapter")
+        if addInfoViewModel.entityType == "Chapter" {
+            return (name ?? "New Chapter")
         } else {
-            return (name ?? "") + " " + attribute
+            return (name ?? "New") + " " + attribute
         }
     }
     
@@ -113,7 +162,20 @@ struct AddInfoView: View {
             VStack {
                 HStack {
                     Button {
-                        onDismiss()
+                        //Check if there are unsaved changes
+                        //basically we have a working entity and the text has changed
+                        //or its a new entity in which case if text is empty it has changed
+                        print("pressed")
+                        if (addInfoViewModel.workingEntity != nil && (addInfoViewModel.workingEntity?.value(forKey: attribute) as? String ?? "") != text) {
+                            print("Tom!")
+                            showUnsavedChangesPrompt = true
+                        } else if (text != "" && addInfoViewModel.workingEntity == nil) {
+                            print("wait what?")
+                            showUnsavedChangesPrompt = true
+                        } else {
+                            onDismiss()
+                        }
+                        
                     } label: {
                         Image(systemName: "chevron.left")
                             .font(.title)
@@ -136,30 +198,31 @@ struct AddInfoView: View {
                     if text.isEmpty {
                         Text(previewText ?? "")
                             .foregroundColor(.gray)
-                            .padding(.horizontal,20)
-                            .padding(.vertical, 23)
+                            .padding(.horizontal,35)
+                            .padding(.vertical, 38)
                     }
                         TextEditor(text: $text)
                             .scrollContentBackground(.hidden)
+                            .padding(15)
+                            .padding(.bottom,30)
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(lineWidth: 1)
                             )
                             .frame(maxHeight: flexHeight)
                             .padding()
-                            .overlay(
-                                ExpandView(isExpanded: $isExpanded, flexHeight: $flexHeight, baseHeight: 200)
-                                    .padding(24),
-                            alignment: .bottomLeading
-                                )
-                            
                 }
+                .overlay(
+                    ExpandView(isExpanded: $isExpanded, flexHeight: $flexHeight, baseHeight: 200)
+                        .padding(24),
+                alignment: .bottomLeading
+                    )
                 Spacer()
                 AskCasperView()
 
             }
             PromptUserToNameEntity(addInfoViewModel: addInfoViewModel,isPresented: $showNamePrompt, text: $text, attribute: attribute)
-            
+            UnsavedChangesView(isPresented: $showUnsavedChangesPrompt, onDismiss: $onDismiss)
         }
         .onAppear {
             text = attribute == "Chapter" ? (addInfoViewModel.workingEntity?.value(forKey: "content") as? String ?? "") : (addInfoViewModel.workingEntity?.value(forKey: attribute) as? String ?? "")

@@ -32,6 +32,7 @@ class EntityListViewModel: ObservableObject {
         case location(LocationModel)
         case magic(MagicModel)
         case character(CharacterModel)
+        case chapter(ChapterModel)
     }
     
     func setWorkingEntity(_ entity: NSManagedObject?) {
@@ -79,7 +80,15 @@ class EntityListViewModel: ObservableObject {
                 }
             }
         default :
-            print("Unknown entity type: \(entityType)")
+            if workingModel == nil {
+                let chapterModel = ChapterModel(name: name, content: "")
+                workingModel = .chapter(chapterModel.changeOneAttribute(attribute, value: text))
+            }
+            else {
+                if case let .chapter(chapterModel) = workingModel {
+                    workingModel = .chapter(chapterModel.changeOneAttribute(attribute, value: text))
+                }
+            }
         }
     }
     
@@ -91,8 +100,10 @@ class EntityListViewModel: ObservableObject {
             return magicModel
         case .character(let characterModel):
             return characterModel
+        case .chapter(let chapterModel):
+            return chapterModel
         default:
-            return LocationModel() // or some default model
+            return ChapterModel() // Return a default empty model if none is set
         }
     }
         
@@ -115,7 +126,10 @@ class EntityListViewModel: ObservableObject {
     }
     
     @MainActor
-    func saveEntity(text: String, attribute: String, name: String) async {
+    func saveEntity(text: String, attribute: String, name: String) async -> String{
+        if name == "" {
+            return "Please provide a name for the new entity."
+        }
         workingModel = nil
         constructModelFromText(text: text, attribute: attribute, name: name)
         let fetchedRecord = coreDataStack.fetchRecord(entityName: entityType, name: name)
@@ -127,7 +141,12 @@ class EntityListViewModel: ObservableObject {
                 // around here we would call our embed method to embed the model
                 coreDataStack.save()
             }
+        } else {
+            return "An entity with the name \(name) already exists. Please choose a different name."
         }
+        //here we need to set the workingEntity to the new entity we just created
+        setWorkingEntity(coreDataStack.fetchRecord(entityName: entityType, name: name))
+        return "success"
     }
     
     func generateEncoding() async throws -> [String: Any] {

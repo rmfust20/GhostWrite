@@ -99,7 +99,9 @@ class ContextManager {
                         contextAsString += location.context + "\n"
                     }
                 default:
-                    print("Unknown entity type: \(record.entity.name ?? "Unknown")")
+                    if let chapter = ChapterModel(entity: record) {
+                        contextAsString += chapter.context + "\n"
+                    }
                 }
             }
             

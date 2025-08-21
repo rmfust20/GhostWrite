@@ -37,7 +37,9 @@ struct MagicEditorView: View {
             .fullScreenCover(item: $selectedCard) { card in
                 AddInfoView(
                     attribute: card.title,
-                    onDismiss: { selectedCard = nil },
+                    onDismiss: { selectedCard = nil
+                    magicViewModel.fetchEntities(magicViewModel.entityType)
+                    },
                     addInfoViewModel: magicViewModel
                 )
             }

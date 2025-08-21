@@ -51,8 +51,11 @@ struct MainContent: View {
                 // In MainContent (PreviewTestView.swift)
                 .fullScreenCover(item: $selectedCard) { card in
                     AddInfoView(
-                        attribute: card.title,
-                        onDismiss: { selectedCard = nil },
+                        attribute: (card.title == "Important People") ? "importantPeople": card.title.lowercased(),
+                        onDismiss: { selectedCard = nil
+                            locationViewModel.fetchEntities(locationViewModel.entityType
+                            )
+                        },
                         addInfoViewModel: locationViewModel
                     )
                 }

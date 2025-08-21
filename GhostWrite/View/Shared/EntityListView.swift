@@ -28,7 +28,8 @@ struct EntityListView: View {
         case "Magic":
             MagicEditorView(isPresented: $navigateLink, magicViewModel: viewModel)
         case "Chapter":
-            AddInfoView(attribute: "Chapter", onDismiss: {
+            AddInfoView(attribute: "content", onDismiss: {
+                viewModel.fetchEntities(entityType)
                 navigateLink = false
             }, addInfoViewModel: viewModel)
         default:
