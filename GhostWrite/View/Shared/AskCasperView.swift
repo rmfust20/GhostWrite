@@ -28,10 +28,21 @@ struct AskCasperView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 64, height: 64)
             }
-            ScrollView {
-                Text(responseText ?? "")
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        Text(responseText ?? "")
+                        Color.clear.frame(height:1).id("bottom")
+                    }
+                }
+                
+                .padding(.horizontal)
+                .onChange(of: responseText) { _, _ in
+                    withAnimation {
+                        proxy.scrollTo("bottom", anchor: .bottom)
+                    }
+                }
             }
-            .padding(.horizontal)
             
             ZStack(alignment: .bottomTrailing) {
                     ZStack(alignment: .topLeading) {
@@ -58,6 +69,7 @@ struct AskCasperView: View {
                                         if let response = await viewModel.generateResponse(text) {
                                             typingTask?.cancel()
                                             responseText = ""
+                                            text = ""
                                             typingTask = Task {
                                                             for (char) in response{
                                                                 try? await Task.sleep(nanoseconds: 30_000_000) // 30ms per char
