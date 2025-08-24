@@ -1,15 +1,20 @@
 //
-//  TestPreviewView.swift
+//  ConfirmationView.swift
 //  GhostWrite
 //
-//  Created by Robert Fusting on 8/9/25.
+//  Created by Robert Fusting on 8/24/25.
 //
 
 import SwiftUI
 
-struct TestPreviewView: View {
+struct ConfirmationView: View {
     @Binding var isPresented: Bool
-    @Binding var onDismiss: () -> Void
+    var onDismiss: () -> Void
+    let text: String
+    
+    
+    
+    
     var body: some View {
         if isPresented {
             ZStack {
@@ -18,7 +23,7 @@ struct TestPreviewView: View {
                     .ignoresSafeArea()
                     .blur(radius: 8)
                 VStack{
-                    Text("Are you sure you want to quit? You have unsaved changes")
+                    Text(text)
                         .font(.title3)
                         .multilineTextAlignment(.center)
                     HStack {
@@ -51,5 +56,5 @@ struct TestPreviewView: View {
 }
 
 #Preview {
-    TestPreviewView(isPresented: .constant(true), onDismiss: .constant({}))
+    ConfirmationView(isPresented: .constant(true), onDismiss: ({}), text: "This is a test preview")
 }

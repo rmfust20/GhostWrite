@@ -16,6 +16,7 @@ struct AskCasperView: View {
     @StateObject var viewModel: CasperViewModel = CasperViewModel()
     @State private var responseText: String? = nil
     @State private var typingTask: Task<Void, Never>? = nil
+    @State private var isThinking: Bool = false
     
     
 
@@ -31,7 +32,10 @@ struct AskCasperView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(alignment: .leading) {
-                        Text(responseText ?? "")
+                        HStack {
+                            Text(responseText ?? "")
+                            InProgressView(text:"Thinking", isPresented: $isThinking)
+                        }
                         Color.clear.frame(height:1).id("bottom")
                     }
                 }
@@ -66,10 +70,12 @@ struct AskCasperView: View {
                         Spacer()
                         Button {
                                 Task {
+                                    responseText = ""
+                                    isThinking = true
                                         if let response = await viewModel.generateResponse(text) {
-                                            typingTask?.cancel()
-                                            responseText = ""
                                             text = ""
+                                            isThinking = false
+                                            typingTask?.cancel()
                                             typingTask = Task {
                                                             for (char) in response{
                                                                 try? await Task.sleep(nanoseconds: 30_000_000) // 30ms per char

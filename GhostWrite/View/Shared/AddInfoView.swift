@@ -43,6 +43,7 @@ struct PromptUserToNameEntity: View {
     @Binding var isPresented: Bool
     @Binding var text: String
     @State private var saveResultString: String = ""
+    @State private var isSaving: Bool = false
     let attribute : String
 
     var body: some View {
@@ -60,6 +61,7 @@ struct PromptUserToNameEntity: View {
                     TextField("Name", text: $entityName)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .padding(.horizontal)
+                    InProgressView(text:"Saving", isPresented: $isSaving)
                     Text(saveResultString)
                         .foregroundStyle(Color.red)
                     HStack {
@@ -69,12 +71,16 @@ struct PromptUserToNameEntity: View {
                         Spacer()
                         Button("Save") {
                             // Handle save action here
+                            isSaving = true
                             Task {
                                 saveResultString =  await addInfoViewModel.saveEntity(text: text, attribute: attribute, name: entityName)
                                 if saveResultString == "success" {
                                     isPresented = false
+                                    
                                 }
+                                isSaving = false
                             }
+                            
                         }
                     }
                     .padding(.horizontal)
@@ -165,12 +171,9 @@ struct AddInfoView: View {
                         //Check if there are unsaved changes
                         //basically we have a working entity and the text has changed
                         //or its a new entity in which case if text is empty it has changed
-                        print("pressed")
                         if (addInfoViewModel.workingEntity != nil && (addInfoViewModel.workingEntity?.value(forKey: attribute) as? String ?? "") != text) {
-                            print("Tom!")
                             showUnsavedChangesPrompt = true
                         } else if (text != "" && addInfoViewModel.workingEntity == nil) {
-                            print("wait what?")
                             showUnsavedChangesPrompt = true
                         } else {
                             onDismiss()
@@ -222,11 +225,10 @@ struct AddInfoView: View {
 
             }
             PromptUserToNameEntity(addInfoViewModel: addInfoViewModel,isPresented: $showNamePrompt, text: $text, attribute: attribute)
-            UnsavedChangesView(isPresented: $showUnsavedChangesPrompt, onDismiss: $onDismiss)
+            ConfirmationView(isPresented: $showUnsavedChangesPrompt, onDismiss: onDismiss, text: "Are you sure you want to quit? You have unsaved changes")
         }
         .onAppear {
             text = attribute == "Chapter" ? (addInfoViewModel.workingEntity?.value(forKey: "content") as? String ?? "") : (addInfoViewModel.workingEntity?.value(forKey: attribute) as? String ?? "")
-            print(addInfoViewModel.workingEntity?.value(forKey: attribute) as? String ?? "No Name")
         }
     }
 }

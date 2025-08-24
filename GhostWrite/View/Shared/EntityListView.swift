@@ -15,6 +15,9 @@ struct EntityListView: View {
     @State private var navigateLink: Bool = false
     @Binding var isPresented: Bool
     @ObservedObject var viewModel: EntityListViewModel
+    @State private var showDeleteAlert: Bool = false
+    @State private var canDelete: Bool = false
+    @State private var entity: NSManagedObject? = nil
     
     
     
@@ -72,6 +75,18 @@ struct EntityListView: View {
                             .onTapGesture {
                                 handleEntityTap(entity)
                             }
+                            .overlay (
+                                Image(systemName: "x.circle")
+                                    .font(.title)
+                                    .padding()
+                                    .onTapGesture {
+                                        self.entity = entity
+                                        showDeleteAlert = true
+                                    }
+                                ,
+                                alignment: .topTrailing
+                                    
+                            )
                         }
                     }
                 }
@@ -82,9 +97,13 @@ struct EntityListView: View {
                     destinationView
                 }
             }
+            ConfirmationView(isPresented: $showDeleteAlert, onDismiss: {
+                canDelete = false
+                viewModel.deleteEntity(entity!)
+                viewModel.fetchEntities(entityType)
+            }, text: "Are you sure you want to delete?")
         }
     }
-    
 }
 
 

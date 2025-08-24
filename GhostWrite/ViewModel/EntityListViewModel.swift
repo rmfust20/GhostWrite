@@ -114,6 +114,10 @@ class EntityListViewModel: ObservableObject {
         self.fetchedResults = coreDataStack.fetchAllRecords(entityName: entity)
     }
     
+    func deleteEntity(_ entity: NSManagedObject) {
+        coreDataStack.delete(entity)
+    }
+    
     @MainActor
     func updateEntity(text: String, attribute: String) async {
         if let workingEntity = workingEntity {

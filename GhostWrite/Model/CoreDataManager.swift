@@ -33,7 +33,6 @@ class CoreDataStack: ObservableObject {
 }
 
 extension CoreDataStack {
-    // Save changes in the context if there are any.
     func save() {
         guard persistentContainer.viewContext.hasChanges else { return }
         do {
@@ -43,8 +42,7 @@ extension CoreDataStack {
         }
     }
     
-    // Delete a ShoppingItem and save the context.
-    func delete<T: NSManagedObject>(item: T) {
+    func delete<T: NSManagedObject>(_ item: T) {
         persistentContainer.viewContext.delete(item)
         save()
     }

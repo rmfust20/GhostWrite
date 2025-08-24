@@ -64,7 +64,6 @@ final class OpenAIService {
 
     private let endpoint = URL(string: "https://api.openai.com/v1/chat/completions")!
 
-    /// Convenience wrapper for a single user prompt
     func sendMessage(
         prompt: String,
         model: String = "gpt-4o-mini",
@@ -80,7 +79,6 @@ final class OpenAIService {
         )
     }
 
-    /// Main entry: send an array of chat `messages` with roles.
     func sendMessages(
         messages: [Message],
         model: String = "gpt-4o-mini",
